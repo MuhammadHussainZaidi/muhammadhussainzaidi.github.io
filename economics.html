@@ -33,22 +33,38 @@
     <style>
         body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
         * { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
-
-        /* Spotlight Effect */
-        .spotlight-card { position: relative; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .spotlight-card::before {
-            content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(37, 99, 235, 0.06), transparent 40%);
-            opacity: 0; transition: opacity 0.3s ease; pointer-events: none; z-index: 1;
+        
+        /* =========================================
+           GLOBAL CURSOR GLOW EFFECT 
+           ========================================= */
+        #cursor-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background: radial-gradient(
+                600px circle at var(--cursor-x, 50%) var(--cursor-y, 50%), 
+                rgba(37, 99, 235, 0.08), 
+                transparent 40%
+            );
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
-        .dark .spotlight-card::before {
-            background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(59, 130, 246, 0.15), transparent 40%);
-        }
-        .spotlight-card:hover::before { opacity: 1; }
 
-        /* Hover Tilt */
-        .tilt-card { transform-style: preserve-3d; transition: transform 0.3s ease; }
-        .tilt-card:hover { transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) scale(1.01); }
+        .dark #cursor-glow {
+            background: radial-gradient(
+                600px circle at var(--cursor-x, 50%) var(--cursor-y, 50%), 
+                rgba(59, 130, 246, 0.15), 
+                transparent 40%
+            );
+        }
+
+        body:hover #cursor-glow {
+            opacity: 1;
+        }
 
         /* Nav Link */
         .nav-link { position: relative; }
@@ -60,19 +76,21 @@
         .nav-link:hover::after { width: 100%; }
     </style>
 </head>
-<body class="bg-bdo-gray dark:bg-slate-900 text-slate-800 dark:text-slate-200 antialiased selection:bg-blue-100 dark:selection:bg-blue-900 selection:text-blue-900 dark:selection:text-blue-100 min-h-screen flex flex-col">
+<body class="bg-bdo-gray dark:bg-slate-900 text-slate-800 dark:text-slate-200 antialiased selection:bg-blue-100 dark:selection:bg-blue-900 selection:text-blue-900 dark:selection:text-blue-100 min-h-screen flex flex-col relative">
+
+    <div id="cursor-glow"></div>
 
     <nav class="fixed top-0 w-full bg-bdo-gray/90 dark:bg-slate-900/90 backdrop-blur-md z-50 border-b border-slate-200 dark:border-slate-700">
-        <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between relative z-10">
             <a href="index.html" class="text-lg font-semibold tracking-tight hover:text-accent transition-colors">Muhammad.</a>
-
+            
             <div class="hidden md:flex gap-6 text-sm font-medium text-slate-500 dark:text-slate-400">
                 <a href="index.html#intro" class="nav-link hover:text-slate-900 dark:hover:text-slate-100 transition-colors">About</a>
                 <a href="index.html#stats" class="nav-link hover:text-slate-900 dark:hover:text-slate-100 transition-colors">Impact</a>
                 <a href="index.html#work" class="nav-link hover:text-slate-900 dark:hover:text-slate-100 transition-colors">Case Studies</a>
                 <a href="#" class="nav-link active text-slate-900 dark:text-slate-100">Economics</a>
             </div>
-
+            
             <button id="darkModeToggle" class="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
                 <svg id="sunIcon" class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 <svg id="moonIcon" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
@@ -80,51 +98,52 @@
         </div>
     </nav>
 
-    <header class="pt-32 pb-16 px-6 border-b border-slate-200 dark:border-slate-800">
+    <header class="pt-32 pb-16 px-6 border-b border-slate-200 dark:border-slate-800 relative z-10">
         <div class="max-w-4xl mx-auto">
             <h1 class="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">Economics & Analysis</h1>
             <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl">
-                I'm passionate about the world economy and like to share some of my insights from time to time. Hope you find them insightful!
+                Exploring the intersection of macroeconomics, market strategy, and behavioral finance. Insights on how global shifts impact local markets.
             </p>
         </div>
     </header>
 
-    <main class="flex-grow px-6 py-12">
-        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+    <main class="flex-grow px-6 py-20 relative z-10">
+        <div class="max-w-4xl mx-auto">
+            
+            <div class="flex flex-col items-center justify-center p-12 md:p-20 text-center bg-white dark:bg-slate-800/50 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl backdrop-blur-sm">
+                
+                <div class="w-16 h-16 bg-blue-50 dark:bg-slate-700 rounded-full flex items-center justify-center mb-6 text-accent animate-pulse">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                    </svg>
+                </div>
 
-            <a href="article-template.html" class="spotlight-card tilt-card block group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300">
-                <div class="h-48 bg-slate-200 dark:bg-slate-700 relative overflow-hidden">
-                    <div class="absolute inset-0 flex items-center justify-center text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800">
-                        <span class="font-mono text-xs uppercase tracking-widest">Image Placeholder</span>
-                    </div>
-                </div>
-                <div class="p-6 relative z-10">
-                    <div class="flex items-center gap-3 mb-3">
-                        <span class="text-xs font-mono text-accent font-medium">Macro Trends</span>
-                        <span class="text-xs text-slate-400 dark:text-slate-500">&bull; Oct 24, 2025</span>
-                    </div>
-                    <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-accent transition-colors">
-                        The Inflation Paradox: Why Prices Stay High
-                    </h2>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-3">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation...
-                    </p>
-                    <div class="mt-4 flex items-center text-sm font-medium text-accent">
-                        Read Analysis <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                    </div>
-                </div>
-            </a>
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">Work in Progress</h2>
+                <p class="text-lg text-slate-600 dark:text-slate-400 max-w-md">
+                    I'll be posting soon, please visit back in a week :)
+                </p>
 
             </div>
+
+        </div>
     </main>
 
-    <footer class="py-12 border-t border-slate-200 dark:border-slate-800">
+    <footer class="py-12 border-t border-slate-200 dark:border-slate-800 relative z-10">
         <div class="text-center text-slate-400 dark:text-slate-500 text-sm">
             <p>&copy; 2026 Muhammad. Built for impact.</p>
         </div>
     </footer>
 
     <script>
+        // GLOBAL MOUSE TRACKING FOR GLOW
+        document.addEventListener('mousemove', (e) => {
+            const glow = document.getElementById('cursor-glow');
+            if(glow) {
+                glow.style.setProperty('--cursor-x', `${e.clientX}px`);
+                glow.style.setProperty('--cursor-y', `${e.clientY}px`);
+            }
+        });
+
         // Dark Mode Logic (Shared)
         const darkModeToggle = document.getElementById('darkModeToggle');
         const html = document.documentElement;
@@ -134,18 +153,6 @@
         darkModeToggle.addEventListener('click', () => {
             html.classList.toggle('dark');
             localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-        });
-
-        // Spotlight Effect
-        const cards = document.querySelectorAll('.spotlight-card');
-        document.addEventListener('mousemove', (e) => {
-            cards.forEach(card => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                card.style.setProperty('--mouse-x', `${x}px`);
-                card.style.setProperty('--mouse-y', `${y}px`);
-            });
         });
     </script>
 </body>
