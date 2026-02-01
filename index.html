@@ -80,7 +80,41 @@
             background: #94a3b8;
         }
 
-        /* Spotlight Effect */
+        /* =========================================
+           GLOBAL CURSOR GLOW EFFECT
+           ========================================= */
+        #cursor-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allows clicking through it */
+            z-index: 0; /* Behind content */
+            background: radial-gradient(
+                600px circle at var(--cursor-x, 50%) var(--cursor-y, 50%),
+                rgba(37, 99, 235, 0.08),
+                transparent 40%
+            );
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Stronger glow in dark mode */
+        .dark #cursor-glow {
+            background: radial-gradient(
+                600px circle at var(--cursor-x, 50%) var(--cursor-y, 50%),
+                rgba(59, 130, 246, 0.15),
+                transparent 40%
+            );
+        }
+
+        /* Show glow only when hovering body */
+        body:hover #cursor-glow {
+            opacity: 1;
+        }
+
+        /* Spotlight Effect for Cards */
         .spotlight-card {
             position: relative;
             overflow: hidden;
@@ -275,6 +309,8 @@
 </head>
 <body class="bg-bdo-gray dark:bg-slate-900 text-slate-800 dark:text-slate-200 antialiased selection:bg-blue-100 dark:selection:bg-blue-900 selection:text-blue-900 dark:selection:text-blue-100 relative transition-colors duration-300">
 
+    <div id="cursor-glow"></div>
+
     <div id="copyToast" class="copy-toast">
         <div class="flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -293,15 +329,17 @@
     <div id="progress-bar" class="fixed top-0 left-0 h-1 bg-accent z-[60] w-0 transition-all duration-100 ease-out"></div>
 
     <nav class="fixed top-0 w-full bg-bdo-gray/90 dark:bg-slate-900/90 backdrop-blur-md z-50 border-b border-slate-200 dark:border-slate-700 transition-all duration-300" id="navbar">
-        <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-            <a href="#" class="text-lg font-semibold tracking-tight hover:text-accent transition-colors">Muhammad.</a>
-            <div class="hidden md:flex gap-6 text-sm font-medium text-slate-500 dark:text-slate-400">
+        <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between relative">
+            <a href="#" class="text-lg font-semibold tracking-tight hover:text-accent transition-colors relative z-10">Muhammad.</a>
+
+            <div class="hidden md:flex gap-6 text-sm font-medium text-slate-500 dark:text-slate-400 relative z-10">
                 <a href="#intro" class="nav-link hover:text-slate-900 dark:hover:text-slate-100 transition-colors">About</a>
                 <a href="#stats" class="nav-link hover:text-slate-900 dark:hover:text-slate-100 transition-colors">Impact</a>
                 <a href="#work" class="nav-link hover:text-slate-900 dark:hover:text-slate-100 transition-colors">Case Studies</a>
                 <a href="economics.html" class="nav-link hover:text-slate-900 dark:hover:text-slate-100 transition-colors">Economics</a>
             </div>
-            <div class="flex items-center gap-4">
+
+            <div class="flex items-center gap-4 relative z-10">
                 <button id="darkModeToggle" class="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors" aria-label="Toggle dark mode">
                     <svg id="sunIcon" class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
@@ -310,28 +348,63 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
                     </svg>
                 </button>
-                <div class="md:hidden text-slate-500 dark:text-slate-400">
+
+                <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors" aria-label="Open menu">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                </div>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobileMenu" class="hidden md:hidden absolute top-16 left-0 w-full bg-bdo-gray dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 shadow-xl transition-all duration-300">
+            <div class="flex flex-col p-4 space-y-4 font-medium text-slate-500 dark:text-slate-400">
+                <a href="#intro" class="hover:text-accent transition-colors block py-2" onclick="toggleMobileMenu()">About</a>
+                <a href="#stats" class="hover:text-accent transition-colors block py-2" onclick="toggleMobileMenu()">Impact</a>
+                <a href="#work" class="hover:text-accent transition-colors block py-2" onclick="toggleMobileMenu()">Case Studies</a>
+                <a href="economics.html" class="hover:text-accent transition-colors block py-2">Economics</a>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-4xl mx-auto px-6 pt-32 pb-20">
+    <main class="max-w-4xl mx-auto px-6 pt-32 pb-20 relative z-10">
 
         <section id="intro" class="mb-24 reveal">
-            <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white mb-12 leading-tight">
+            <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white mb-12 leading-tight text-center md:text-left">
                 Hi! I'm Muhammad.
             </h1>
 
-            <div class="flex flex-col md:flex-row gap-10 items-start">
-                <div class="w-32 h-32 md:w-40 md:h-40 shrink-0 relative rounded-2xl overflow-hidden shadow-lg border-2 border-white dark:border-slate-700 bg-slate-200 dark:bg-slate-800 group">
-                    <img src="profile.jpg" onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=Me'" alt="Profile Picture" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            <div class="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
+
+                <div class="flex flex-col gap-6 shrink-0 items-center md:items-start md:w-64 w-full">
+
+                    <div class="w-48 h-48 md:w-64 md:h-64 relative rounded-2xl overflow-hidden shadow-lg border-2 border-white dark:border-slate-700 bg-slate-200 dark:bg-slate-800 group mx-auto md:mx-0">
+                        <img src="profile.jpg" onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=Me'" alt="Profile Picture" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    </div>
+
+                    <div class="w-full bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-100 dark:border-slate-700 shadow-sm">
+                        <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">Credentials</h3>
+
+                        <div class="flex flex-col gap-4">
+                            <div>
+                                <p class="text-sm font-semibold text-slate-900 dark:text-white leading-tight">BComm Marketing</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Concordia University</p>
+                            </div>
+
+                            <div>
+                                <p class="text-sm font-semibold text-slate-900 dark:text-white leading-tight">PMP® Certified</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Project Management Inst.</p>
+                            </div>
+
+                            <div>
+                                <p class="text-sm font-semibold text-slate-900 dark:text-white leading-tight">Power BI Data Analyst Associate</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Microsoft Certified | 2024</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="prose prose-lg prose-slate dark:prose-invert text-slate-600 dark:text-slate-300 leading-relaxed space-y-6">
+                <div class="prose prose-lg prose-slate dark:prose-invert text-slate-600 dark:text-slate-300 leading-relaxed space-y-6 flex-1">
                     <p>I love solving problems.</p>
-                    <p>While many start with a corporate career, I started by knocking on doors. I convinced business owners to trust me with their marketing, and to my own amazement, it worked. So... I learned relationship building the hard way.</p>
+                    <p>My path hasn't been straight. While many start with a corporate career, I started by knocking on doors. I convinced business owners to trust me with their marketing, and to my own amazement, it worked. So... I learned relationship building the hard way, without a safety net.</p>
                     <p>Eventually, that curiosity led me to <span class="font-semibold text-slate-900 dark:text-white">Dialectica</span>, where I had the opportunity to support the world's top strategy firms (like <span class="font-semibold text-slate-900 dark:text-white">BCG</span> and <span class="font-semibold text-slate-900 dark:text-white">Bain</span>) on M&A deals ranging from $5M to over $1B.</p>
                     <p>For me, the drive is the same whether I'm helping a founder scale a startup or working with BCG on M&A for a billion-dollar acquisition. I love looking past the surface level, finding the <span class="font-semibold text-slate-900 dark:text-white">actual</span> problem, and solving it.</p>
                     <p class="text-sm text-slate-500 dark:text-slate-400 italic">You can check out my Case Studies below to see how I think.</p>
@@ -642,6 +715,16 @@
     </main>
 
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // GLOBAL MOUSE TRACKING FOR GLOW
+        document.addEventListener('mousemove', (e) => {
+            const glow = document.getElementById('cursor-glow');
+            if(glow) {
+                // Update CSS variables on the body or directly on the element
+                glow.style.setProperty('--cursor-x', `${e.clientX}px`);
+                glow.style.setProperty('--cursor-y', `${e.clientY}px`);
+            }
+        });
+
         // Dark Mode Toggle
         const darkModeToggle = document.getElementById('darkModeToggle');
         const html = document.documentElement;
@@ -657,6 +740,16 @@
             const theme = html.classList.contains('dark') ? 'dark' : 'light';
             localStorage.setItem('theme', theme);
         });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('hidden');
+        }
 
         // Copy to Clipboard
         function copyToClipboard(text, label) {
